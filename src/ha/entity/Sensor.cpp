@@ -1,25 +1,22 @@
 #include "Sensor.h"
 #include "../../defines.h"
+#include "utils/Json.h"
 
-const char* Sensor::marshalJSON()
+std::string Sensor::marshalJSON()
 {
-    DynamicJsonDocument jsonDoc(JSON_DYNAMIC_MSG_BUFFER);
-    JsonObject entity = jsonDoc.to<JsonObject>();
-    buildBaseField(&entity);
+    return buildJson([this](JsonObject entity) {
+        buildBaseField(entity);
 
-    if (_stateTopic) {
-        entity[F("state_topic")] = _stateTopic;
-    }
+        if (_stateTopic) {
+            entity[F("state_topic")] = _stateTopic;
+        }
 
-    if (_valueTemplate) {
-        entity[F("value_template")] = _valueTemplate;
-    }
+        if (_valueTemplate) {
+            entity[F("value_template")] = _valueTemplate;
+        }
 
-    if (_unitOfMeasurement) {
-        entity[F("unit_of_measurement")] = _unitOfMeasurement;
-    }
-
-    serializeJson(jsonDoc, _payload, JSON_DYNAMIC_MSG_BUFFER);
-
-    return _payload;
+        if (_unitOfMeasurement) {
+            entity[F("unit_of_measurement")] = _unitOfMeasurement;
+        }
+    });
 }

@@ -2,13 +2,13 @@
 #include "CommandConsumer.h"
 #include "../entity/CommandEntity.h"
 
-void CommandConsumer::consume(const char* payload)
+void CommandConsumer::consume(std::string payload)
 {
-    Serial.printf("CommandConsumer::consume: %s\n", payload);
+    Serial.println("command consumer: handle");
 
     CommandEntity command;
-    if (!command.unmarshalJSON(payload)) {
-        Serial.printf("cant unmarshal command");
+    if (!command.unmarshalJSON(payload.c_str())) {
+        Serial.printf("command consumer: cant unmarshal command");
         return;
     }
 

@@ -29,7 +29,7 @@ public:
         _isFlameActive(isFlameActive),
         _isFault(isFault), _modulation(modulation) {}
 
-    const char* marshalJSON();
+    std::string marshalJSON();
 
 private:
     const char* _centralHeatingMode;
@@ -45,6 +45,4 @@ private:
     bool _isFault;
 
     float _modulation;
-
-    char _payload[JSON_DYNAMIC_MSG_BUFFER] = {0};
 };

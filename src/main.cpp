@@ -12,58 +12,57 @@
 #include "web/Handler.h"
 #include "wifi/WiFiMgr.h"
 
-ConfigMgr* configMgr;
-MQTT* mqtt;
-DiscoveryMgr* haDiscoveryMgr;
+ConfigMgr configMgr;
+MQTT mqtt(&configMgr);
+DiscoveryMgr haDiscoveryMgr(&configMgr, &mqtt);
 OpenTherm openTherm(OPENTERM_IN_PIN, OPENTERM_OUT_PIN);
-WiFiMgr* wifiMgr;
-StateProducer* stateProducer;
-Boiler* boiler;
-CommandConsumer* commandConsumer;
-Handler* handler;
+WiFiMgr wifiMgr(&configMgr);
+StateProducer stateProducer(&mqtt);
+Boiler boiler(&configMgr, &openTherm, &stateProducer);
+CommandConsumer commandConsumer(&boiler);
+Handler handler(&configMgr, &boiler);
 
 void ICACHE_RAM_ATTR handleInterrupt()
 {
 	openTherm.handleInterrupt();
 }
 
-void setup()
-{
-    configMgr = new ConfigMgr();
-    mqtt = new MQTT(configMgr);
-    haDiscoveryMgr = new DiscoveryMgr(configMgr, mqtt);
-    wifiMgr = new WiFiMgr(configMgr);
-    stateProducer = new StateProducer(mqtt);
-    boiler = new Boiler(configMgr, &openTherm, stateProducer);
-    commandConsumer = new CommandConsumer(boiler);
-    handler = new Handler(configMgr, boiler);
+void checkHeap() {
+    if (!heap_caps_check_integrity_all(true)) {
+        Serial.println("Heap integrity check failed before checking largest free block!");
+    } else {
+        Serial.println("Heap is correct");
+    }
+
+    size_t largestBlock = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+    Serial.print("Largest free block: ");
+    Serial.println(largestBlock);
+}
+
+void setup() {
+    randomSeed(micros());
 
     Serial.begin(SERIAL_SPEED);
     SPIFFS.begin(true);
 
-    configMgr->load();
+    configMgr.load();
 
     openTherm.begin(handleInterrupt);
 
-    wifiMgr->init();
-
-    mqtt->init();
-
-    boiler->init();
-
-    handler->init();
-
-    stateProducer->init(configMgr->getConfig()->mqttStateTopic);
-
-    commandConsumer->init(configMgr->getConfig()->mqttCommandTopic);
-    mqtt->subscribe(commandConsumer);
-
-    haDiscoveryMgr->init();
+    wifiMgr.init();
+    mqtt.init();
+    boiler.init();
+    handler.init();
+    stateProducer.init(configMgr.getConfig()->mqttStateTopic);
+    commandConsumer.init(configMgr.getConfig()->mqttCommandTopic);
+    mqtt.subscribe(&commandConsumer);
+    haDiscoveryMgr.init();
 }
 
 void loop()
 {
-    mqtt->loop();
-    boiler->loop();
-    haDiscoveryMgr->loop();
+    mqtt.loop();
+    boiler.loop();
+    haDiscoveryMgr.loop();
+    delay(10);
 }

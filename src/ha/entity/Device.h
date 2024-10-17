@@ -7,7 +7,7 @@
 class Device
 {
 public:
-    void buildBaseField(JsonObject* entity);
+    void buildBaseField(JsonObject entity);
 
     void setConfigurationURL(const char* configurationURL)
     {
@@ -25,10 +25,9 @@ public:
         _hwVersion = hwVersion;
     }
 
-    void setIdentifiers(const char** identifiers, uint8_t size)
+    void addIdentifier(std::string identifiers)
     {
-        _identifiers = identifiers;
-        _identifiersSize = size;
+        _identifiers.push_back(identifiers);
     }
 
     void setManufacturer(const char* manufacturer)
@@ -66,8 +65,9 @@ private:
     const char** _connections = NULL;
     uint8_t _connectionsSize = 0;
     const char* _hwVersion = NULL;
-    const char** _identifiers = NULL;
-    uint8_t _identifiersSize = 0;
+
+    std::list<std::string> _identifiers;
+
     const char* _manufacturer = NULL;
     const char* _model = NULL;
     const char* _name = NULL;

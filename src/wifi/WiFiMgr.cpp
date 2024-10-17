@@ -7,28 +7,19 @@ void WiFiMgr::init()
 
     if (!config->isAPMode) {
         WiFi.mode(WIFI_STA);
-        WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info) {
-            this->onEvent(event, info);
-        }, SYSTEM_EVENT_STA_CONNECTED);
-        WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info) {
-            this->onEvent(event, info);
-        }, SYSTEM_EVENT_STA_DISCONNECTED);
-
+        WiFi.onEvent([this](arduino_event_id_t event, arduino_event_info_t info) {
+            if (event == ARDUINO_EVENT_WIFI_STA_CONNECTED) {
+                _isConnected = true;
+                Serial.println("wifi: connected");
+            } else if (event == ARDUINO_EVENT_WIFI_STA_DISCONNECTED) {
+                _isConnected = false;
+                Serial.println("wifi: disconnected");
+            }
+        });
+        
         WiFi.begin(config->wifiSSID, config->wifiPassword);
     } else {
         WiFi.mode(WIFI_AP);
         WiFi.softAP(config->wifiAPSSID, config->wifiAPHasPassword ? config->wifiAPPassword : NULL);
-    }
-}
-
-void WiFiMgr::onEvent(WiFiEvent_t event, WiFiEventInfo_t info)
-{
-    switch (event) {
-        case SYSTEM_EVENT_STA_CONNECTED:
-            _isConnected = true;
-            break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
-            _isConnected = false;
-            break;
     }
 }

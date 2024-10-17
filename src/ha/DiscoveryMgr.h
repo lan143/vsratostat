@@ -74,32 +74,18 @@ public:
 
 private:
     void sendDiscovery();
-    void updateTopicName(char* topic, const char* prefix, const char* type, const char* uniqueID, const char* name);
+    std::string buildTopicName(const char* prefix, const char* type, const char* uniqueID, const char* name);
 
-    void buildClimateConfig(Config* config, Device* device, const char* chipID);
-    void buildHotWaterConfig(Config* config, Device* device, const char* chipID);
-    void buildModulationSensorConfig(Config* config, Device* device, const char* chipID);
-    void buildHotWaterSensorConfig(Config* config, Device* device, const char* chipID);
-    void buildFlameSensorConfig(Config* config, Device* device, const char* chipID);
-    void buildFaultSensorConfig(Config* config, Device* device, const char* chipID);
-    void buildResetButtonConfig(Config* config, Device* device, const char* chipID);
+    bool publishClimateConfig();
+    bool publishHotWaterConfig();
+    bool publishModulationSensorConfig();
+    bool publishHotWaterSensorConfig();
+    bool publishFlameSensorConfig();
+    bool publishFaultSensorConfig();
+    bool publishResetButtonConfig();
 
 private:
-    char _climateTopic[TOPIC_SIZE] = {0};
-    char _hotWaterTopic[TOPIC_SIZE] = {0};
-    char _modulationSensorTopic[TOPIC_SIZE] = {0};
-    char _hotWaterSensorTopic[TOPIC_SIZE] = {0};
-    char _flameSensorTopic[TOPIC_SIZE] = {0};
-    char _faultSensorTopic[TOPIC_SIZE] = {0};
-    char _resetButtonTopic[TOPIC_SIZE] = {0};
-
-    char _climateConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _hotWaterConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _modulationSensorConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _hotWaterSensorConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _flameSensorConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _faultSensorConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
-    char _resetButtonConfigJSON[JSON_DYNAMIC_MSG_BUFFER] = {0};
+    Device _device;
 
 private:
     ConfigMgr* _configMgr;

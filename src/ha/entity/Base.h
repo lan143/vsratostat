@@ -21,7 +21,7 @@ public:
         _uniqueID(uniqueID), _forceUpdate(forceUpdate) {}
 
 protected:
-    void buildBaseField(JsonObject* entity);
+    void buildBaseField(JsonObject entity);
 
 private:
     const char* _name = NULL;

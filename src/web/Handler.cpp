@@ -4,6 +4,7 @@
 #include "../defines.h"
 #include "Handler.h"
 #include "utils/String.h"
+#include "utils/Json.h"
 
 void Handler::init()
 {
@@ -30,21 +31,22 @@ void Handler::init()
     _server->on("/api/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
 
-        DynamicJsonDocument json(JSON_DYNAMIC_MSG_BUFFER);
-        Config* config = _configMgr->getConfig();
-        json["wifiSSID"] = config->wifiSSID;
-        json["wifiPassword"] = config->wifiPassword;
-        json["mqttHost"] = config->mqttHost;
-        json["mqttPort"] = config->mqttPort;
-        json["mqttLogin"] = config->mqttLogin;
-        json["mqttPassword"] = config->mqttPassword;
-        json["mqttIsHADiscovery"] = config->mqttIsHADiscovery;
-        json["mqttHADiscoveryPrefix"] = config->mqttHADiscoveryPrefix;
-        json["mqttCommandTopic"] = config->mqttCommandTopic;
-        json["mqttStateTopic"] = config->mqttStateTopic;
+        std::string payload = buildJson([this](JsonObject entity) {
+            Config* config = _configMgr->getConfig();
 
-        serializeJson(json, *response);
+            entity["wifiSSID"] = config->wifiSSID;
+            entity["wifiPassword"] = config->wifiPassword;
+            entity["mqttHost"] = config->mqttHost;
+            entity["mqttPort"] = config->mqttPort;
+            entity["mqttLogin"] = config->mqttLogin;
+            entity["mqttPassword"] = config->mqttPassword;
+            entity["mqttIsHADiscovery"] = config->mqttIsHADiscovery;
+            entity["mqttHADiscoveryPrefix"] = config->mqttHADiscoveryPrefix;
+            entity["mqttCommandTopic"] = config->mqttCommandTopic;
+            entity["mqttStateTopic"] = config->mqttStateTopic;
+        });
 
+        response->write(payload.c_str());
         request->send(response);
     });
 
@@ -112,6 +114,9 @@ void Handler::init()
         AsyncWebParameter* login = request->getParam("login", true);
         AsyncWebParameter* password = request->getParam("password", true);
         AsyncWebParameter* haDiscoveryPrefix = request->getParam("haDiscoveryPrefix", true);
+        AsyncWebParameter* ishaDiscoveryEnabled = request->getParam("mqttIsHADiscovery", true);
+        AsyncWebParameter* stateTopic = request->getParam("stateTopic", true);
+        AsyncWebParameter* commandTopic = request->getParam("commandTopic", true);
 
         if (host->value().length() == 0 || host->value().length() > HOST_LEN-1) {
             request->send(422, "application/json", "{\"message\": \"MQTT host lenght invalid\"}");
@@ -144,11 +149,31 @@ void Handler::init()
             return;
         }
 
+        if (stateTopic->value().length() == 0 || stateTopic->value().length() > MQTT_TOPIC_LEN-1) {
+            request->send(422, "application/json", "{\"message\": \"state topic length invalid\"}");
+            return;
+        }
+
+        if (commandTopic->value().length() == 0 || commandTopic->value().length() > MQTT_TOPIC_LEN-1) {
+            request->send(422, "application/json", "{\"message\": \"command topic length invalid\"}");
+            return;
+        }
+
+        Serial.printf("ishaDiscoveryEnabled: %s", ishaDiscoveryEnabled->value().c_str());
+
         strcpy(config->mqttHost, host->value().c_str());
         config->mqttPort = (uint16_t)mqttPort;
         strcpy(config->mqttLogin, login->value().c_str());
         strcpy(config->mqttPassword, password->value().c_str());
         strcpy(config->mqttHADiscoveryPrefix, haDiscoveryPrefix->value().c_str());
+        strcpy(config->mqttStateTopic, stateTopic->value().c_str());
+        strcpy(config->mqttCommandTopic, commandTopic->value().c_str());
+
+        if (strcmp(ishaDiscoveryEnabled->value().c_str(), "true") == 0) {
+            config->mqttIsHADiscovery = true;
+        } else {
+            config->mqttIsHADiscovery = false;
+        }
 
         _configMgr->store();
 

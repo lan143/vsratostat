@@ -11,63 +11,53 @@ void MQTT::init()
         return;
     }
 
-    _client.setCallback([&](char *raw_topic, byte *raw_payload, unsigned int length) {
-        callback(raw_topic, raw_payload, length);
-    });
+    Serial.println("mqtt: init");
 
-    _wifiClient.setTimeout(MQTT_SOCKET_TIMEOUT * 1000);
-    _client.setBufferSize(2048);
-    _client.setSocketTimeout(MQTT_SOCKET_TIMEOUT);
+    _client.onMessage([this](char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+        onMessage(topic, payload, properties, len, index, total);
+    });
+    _client.onConnect([this](bool sessionPresent) {
+        Serial.println("mqtt: connected");
+
+        for (auto consumer : _consumers) {
+            _client.subscribe(consumer->getTopicName(), 1);
+        }
+    });
+    _client.onDisconnect([this](AsyncMqttClientDisconnectReason reason) {
+        Serial.println("mqtt: disconnected");
+    });
     _client.setServer(config->mqttHost, config->mqttPort);
 
     _isConfigured = true;
 }
 
-void MQTT::reconnect()
+void MQTT::onMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
-    if (_client.connected()) {
-        return;
-    }
-
-    Config* config = _configMgr->getConfig();
-
-    if (_lastReconnectTime + 1000 < millis()) {
-        if (_client.connect(_clientID, config->mqttLogin, config->mqttPassword)) {
-            for (auto consumer : _consumers) {
-                _client.subscribe(consumer->getTopicName());
-            }
-        }
-        _lastReconnectTime = millis();
-    }
-}
-
-void MQTT::callback(char *raw_topic, byte *raw_payload, unsigned int length)
-{
-    char* payload = (char*)malloc(length+1);
-
-    unsigned int i;
-    for (i = 0; i < length; i++) {
-        payload[i] = (char)raw_payload[i];
-    }
-    payload[i] = 0;
-
-    Serial.printf("MQTT receive message. Topic: %s, Payload: %s\n", raw_topic, payload);
+    std::string correctPayload(payload, len);
+    Serial.printf(
+        "mqtt: receive message, topic: %s, payload: %s, len: %d, total: %d, index: %d\n",
+        topic,
+        correctPayload.c_str(),
+        len,
+        total,
+        index);
 
     for (auto consumer : _consumers) {
-        if (strcmp(consumer->getTopicName(), raw_topic) == 0) {
-            consumer->consume(payload);
+        if (strcmp(consumer->getTopicName(), topic) == 0) {
+            consumer->consume(correctPayload);
         }
     }
-
-    free((void*)payload);
 }
 
 void MQTT::loop()
 {
-    if (!_isConfigured) {
+    if (_client.connected() || WiFi.status() != WL_CONNECTED) {
         return;
     }
 
-    _client.loop();
-    reconnect();
+    if (_lastReconnectTime + 1000 < millis()) {
+        Serial.println("mqtt: connect...");
+        _client.connect();
+        _lastReconnectTime = millis();
+    }
 }

@@ -2,5 +2,5 @@
 
 #include <Arduino.h>
 
-extern const char* getMacAddress();
+extern std::string getMacAddress();
 extern const char* getChipID();

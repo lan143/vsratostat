@@ -1,52 +1,51 @@
 #pragma once
 
 #include <Arduino.h>
-#include <PubSubClient.h>
 #include <list>
+#include <AsyncMqttClient.h>
 #include "../config/ConfigMgr.h"
 #include "../utils/Utils.h"
 #include "Consumer.h"
 
 class MQTT {
 public:
-    MQTT(ConfigMgr* configMgr) : _configMgr(configMgr)
-    {
-        _clientID = getChipID();
-        _client = PubSubClient(_wifiClient);
-    }
+    MQTT(ConfigMgr* configMgr) : _configMgr(configMgr) { }
     void init();
-    void loop();
-    void reconnect();
+    bool isConnected() { return _client.connected(); }
     bool publish(const char* topic, const char* payload, boolean retained)
     {
-        if (_client.publish(topic, payload, retained)) {
-            Serial.printf("successful mqtt publish. topic: %s\n", topic);
+        if (!isConnected()) {
+            return false;
+        }
+
+        if (_client.publish(topic, 1, retained, payload)) {
+            Serial.printf("mqtt: publish successful, topic: %s, payload: %s\n", topic, payload);
             return true;
         } else {
-            Serial.printf("failed mqtt publish. topic: %s\n", topic);
+            Serial.printf("mqtt: publish failed, topic: %s, payload: %s\n", topic, payload);
             return false;
         }
     }
     void subscribe(Consumer* consumer)
     {
-        Serial.printf("MQTT subscribe: %s\n", consumer->getTopicName());
+        Serial.printf("mqtt: subscribe, topic: %s\n", consumer->getTopicName());
 
         _consumers.push_back(consumer);
 
-        if (_client.connected()) {
-            _client.subscribe(consumer->getTopicName());
+        if (_isConfigured && _client.connected()) {
+            _client.subscribe(consumer->getTopicName(), 1);
         }
     }
+    void loop();
 
 private:
-    void callback(char *raw_topic, byte *raw_payload, unsigned int length);
+    void onMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total);
 
 private:
-    const char* _clientID;
-    WiFiClient _wifiClient;
-    PubSubClient _client;
+    AsyncMqttClient _client;
+    
     ConfigMgr* _configMgr;
     uint64_t _lastReconnectTime = 0;
-    bool _isConfigured;
+    bool _isConfigured = false;
     std::list<Consumer*> _consumers;
 };

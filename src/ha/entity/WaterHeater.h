@@ -16,7 +16,7 @@ public:
         const char* uniqueID,
         bool forceUpdate
     ) : Base(name, device, entityCategory, objectID, uniqueID, forceUpdate) {}
-    const char* marshalJSON();
+    std::string marshalJSON();
 
     void setModeCommandTemplate(const char* modeCommandTemplate)
     {
@@ -87,6 +87,4 @@ private:
     const char* _temperatureCommandTopic = NULL;
     const char** _modes = NULL;
     uint8_t _modesSize = 0;
-
-    char _payload[JSON_DYNAMIC_MSG_BUFFER] = {0};
 };

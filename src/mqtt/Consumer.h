@@ -9,7 +9,7 @@ public:
     {
         strcpy(_topic, topic);
     }
-    virtual void consume(const char* payload) = 0;
+    virtual void consume(std::string payload) = 0;
 
     const char* getTopicName() { return _topic; }
 

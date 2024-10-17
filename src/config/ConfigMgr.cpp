@@ -22,8 +22,8 @@ bool ConfigMgr::load()
     }
 
     snprintf(_config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", getMacAddress());
-    snprintf(_config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat_/%s/state", getChipID());
-    snprintf(_config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat_/%s/set", getChipID());
+    snprintf(_config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat/%s/state", getChipID());
+    snprintf(_config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat/%s/set", getChipID());
     snprintf(_config.mqttHADiscoveryPrefix, MQTT_TOPIC_LEN, "homeassistant");
 
     return false;

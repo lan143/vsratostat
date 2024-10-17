@@ -2,7 +2,10 @@
 
 void StateProducer::publish(StateEntity* state)
 {
-    const char* payload = state->marshalJSON();
-    Serial.printf("payload: %s\n", payload);
-    _mqtt->publish(_topic, payload, true);
+    if (!_mqtt->isConnected()) {
+        return;
+    }
+    
+    std::string payload = state->marshalJSON();
+    _mqtt->publish(_topic, payload.c_str(), true);
 }

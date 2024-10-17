@@ -15,7 +15,7 @@ public:
         const char* uniqueID,
         bool forceUpdate
     ) : Base(name, device, entityCategory, objectID, uniqueID, forceUpdate) {}
-    const char* marshalJSON();
+    std::string marshalJSON();
 
     void setStateTopic(const char* stateTopic)
     {
@@ -36,6 +36,4 @@ private:
     const char* _stateTopic = NULL;
     const char* _valueTemplate = NULL;
     const char* _unitOfMeasurement = NULL;
-
-    char _payload[JSON_DYNAMIC_MSG_BUFFER] = {0};
 };

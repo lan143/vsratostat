@@ -1,18 +1,14 @@
 #include "Utils.h"
 
 char _macStr[19] = {0};
-char _macAddress[18] = {0};
 
-const char* getMacAddress()
+std::string getMacAddress()
 {
-    if (strlen(_macAddress) > 0) {
-        return _macAddress;
-    }
-
+    char macAddress[18] = {0};
     uint8_t chipId[6];
-    esp_efuse_read_mac(chipId);
+    esp_read_mac(chipId, ESP_MAC_WIFI_STA);
     snprintf(
-        _macAddress,
+        macAddress,
         18,
         "%02X:%02X:%02X:%02X:%02X:%02X",
         chipId[0],
@@ -23,7 +19,7 @@ const char* getMacAddress()
         chipId[5]
     );
 
-    return _macAddress;
+    return std::string(macAddress);
 }
 
 const char* getChipID()

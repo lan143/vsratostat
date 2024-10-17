@@ -8,7 +8,7 @@ class CommandConsumer : public Consumer
 {
 public:
     CommandConsumer(Boiler* boiler) : _boiler(boiler) {}
-    void consume(const char* payload);
+    void consume(std::string payload);
 
 private:
     Boiler* _boiler;

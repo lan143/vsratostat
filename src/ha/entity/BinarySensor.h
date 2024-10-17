@@ -17,7 +17,7 @@ public:
         bool forceUpdate
     ) : Base(name, device, entityCategory, objectID, uniqueID, forceUpdate) {}
 
-    const char* marshalJSON();
+    std::string marshalJSON();
 
     void setDeviceClass(const char* deviceClass)
     {
@@ -50,6 +50,4 @@ private:
     const char* _valueTemplate = NULL;
     const char* _payloadOn = NULL;
     const char* _payloadOff = NULL;
-
-    char _payload[JSON_DYNAMIC_MSG_BUFFER] = {0};
 };
