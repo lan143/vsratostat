@@ -24,19 +24,7 @@ Handler handler(&configMgr, &boiler);
 
 void ICACHE_RAM_ATTR handleInterrupt()
 {
-	openTherm.handleInterrupt();
-}
-
-void checkHeap() {
-    if (!heap_caps_check_integrity_all(true)) {
-        Serial.println("Heap integrity check failed before checking largest free block!");
-    } else {
-        Serial.println("Heap is correct");
-    }
-
-    size_t largestBlock = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
-    Serial.print("Largest free block: ");
-    Serial.println(largestBlock);
+    openTherm.handleInterrupt();
 }
 
 void setup() {
