@@ -82,7 +82,7 @@ void Boiler::loop()
         float hotWaterCurrentTemperature = _openTherm->getDHWTemperature();
         if (_openTherm->getLastResponseStatus() == OpenThermResponseStatus::SUCCESS) {
             if (!_current.isHotWaterActive()) {
-                hotWaterCurrentTemperature = WATER_HEATING_MIN_TEMP;
+                hotWaterCurrentTemperature = 0;
             }
 
             _current.setHotWaterCurrentTemperature(hotWaterCurrentTemperature);
