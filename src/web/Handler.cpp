@@ -32,7 +32,7 @@ void Handler::init()
         AsyncResponseStream *response = request->beginResponseStream("application/json");
 
         std::string payload = buildJson([this](JsonObject entity) {
-            ConfigEntity& config = _configMgr->getConfig();
+            Config& config = _configMgr->getConfig();
 
             entity["wifiSSID"] = config.wifiSSID;
             entity["wifiPassword"] = config.wifiPassword;
@@ -86,7 +86,7 @@ void Handler::init()
             return;
         }
 
-        ConfigEntity& config = _configMgr->getConfig();
+        Config& config = _configMgr->getConfig();
         strcpy(config.wifiSSID, wifiSSID->value().c_str());
         strcpy(config.wifiPassword, wifiPassword->value().c_str());
         config.isAPMode = false;
@@ -108,7 +108,7 @@ void Handler::init()
             return;
         }
 
-        ConfigEntity& config = _configMgr->getConfig();
+        Config& config = _configMgr->getConfig();
         AsyncWebParameter* host = request->getParam("host", true);
         AsyncWebParameter* port = request->getParam("port", true);
         AsyncWebParameter* login = request->getParam("login", true);

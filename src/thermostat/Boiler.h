@@ -3,7 +3,7 @@
 #include <OpenTherm.h>
 #include <ConfigMgr.h>
 
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 #include "mqtt/Producer/StateProducer.h"
 #include "BoilerState.h"
 #include "BoilerConstant.h"
@@ -12,7 +12,7 @@ class Boiler
 {
 public:
     Boiler(
-        Config::ConfigMgr<ConfigEntity>* configMgr,
+        EDConfig::ConfigMgr<Config>* configMgr,
         OpenTherm* openTherm,
         StateProducer* stateProducer
     );
@@ -38,7 +38,7 @@ private:
     BoilerState _prev;
 
 private:
-    Config::ConfigMgr<ConfigEntity>* _configMgr;
+    EDConfig::ConfigMgr<Config>* _configMgr;
     OpenTherm* _openTherm;
     StateProducer* _stateProducer;
 

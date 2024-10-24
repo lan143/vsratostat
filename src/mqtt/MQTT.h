@@ -5,13 +5,13 @@
 #include <AsyncMqttClient.h>
 #include <list>
 
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 #include "utils/Utils.h"
 #include "Consumer.h"
 
 class MQTT {
 public:
-    MQTT(Config::ConfigMgr<ConfigEntity>* configMgr) : _configMgr(configMgr) { }
+    MQTT(Config& config) : _config(config) { }
     void init();
     bool isConnected() { return _client.connected(); }
     bool publish(const char* topic, const char* payload, boolean retained)
@@ -46,7 +46,7 @@ private:
 private:
     AsyncMqttClient _client;
     
-    Config::ConfigMgr<ConfigEntity>* _configMgr;
+    Config& _config;
     uint64_t _lastReconnectTime = 0;
     bool _isConfigured = false;
     std::list<Consumer*> _consumers;

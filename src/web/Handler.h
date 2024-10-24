@@ -9,12 +9,12 @@
 #include <ESPAsyncWebServer.h>
 #include <ConfigMgr.h>
 
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 #include "thermostat/Boiler.h"
 
 class Handler {
 public:
-    Handler(Config::ConfigMgr<ConfigEntity>* configMgr, Boiler* boiler) : _configMgr(configMgr), _boiler(boiler) {
+    Handler(EDConfig::ConfigMgr<Config>* configMgr, Boiler* boiler) : _configMgr(configMgr), _boiler(boiler) {
         _server = new AsyncWebServer(80);
     }
 
@@ -22,6 +22,6 @@ public:
 
 private:
     AsyncWebServer* _server;
-    Config::ConfigMgr<ConfigEntity>* _configMgr;
+    EDConfig::ConfigMgr<Config>* _configMgr;
     Boiler* _boiler;
 };

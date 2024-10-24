@@ -4,7 +4,7 @@
 #include <ConfigMgr.h>
 
 #include "defines.h"
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 #include "ha/DiscoveryMgr.h"
 #include "mqtt/MQTT.h"
 #include "thermostat/Boiler.h"
@@ -13,11 +13,11 @@
 #include "web/Handler.h"
 #include "wifi/WiFiMgr.h"
 
-Config::ConfigMgr<ConfigEntity> configMgr;
-MQTT mqtt(&configMgr);
-DiscoveryMgr haDiscoveryMgr(&configMgr, &mqtt);
+EDConfig::ConfigMgr<Config> configMgr;
+MQTT mqtt(configMgr.getConfig());
+DiscoveryMgr haDiscoveryMgr(configMgr.getConfig(), &mqtt);
 OpenTherm openTherm(OPENTERM_IN_PIN, OPENTERM_OUT_PIN);
-WiFiMgr wifiMgr(&configMgr);
+WiFiMgr wifiMgr(configMgr.getConfig());
 StateProducer stateProducer(&mqtt);
 Boiler boiler(&configMgr, &openTherm, &stateProducer);
 CommandConsumer commandConsumer(&boiler);
@@ -34,7 +34,7 @@ void setup() {
     Serial.begin(SERIAL_SPEED);
     SPIFFS.begin(true);
 
-    configMgr.setDefault([](ConfigEntity& config) {
+    configMgr.setDefault([](Config& config) {
         snprintf(config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", getMacAddress());
         snprintf(config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat/%s/state", getChipID());
         snprintf(config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat/%s/set", getChipID());

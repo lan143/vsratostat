@@ -3,15 +3,15 @@
 #include <Arduino.h>
 #include <ConfigMgr.h>
 
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 
 class WiFiMgr {
 public:
-    WiFiMgr(Config::ConfigMgr<ConfigEntity>* configMgr) : _configMgr(configMgr) {}
+    WiFiMgr(Config& config) : _config(config) {}
 
     void init();
 
 private:
-    Config::ConfigMgr<ConfigEntity>* _configMgr;
+    Config& _config;
     bool _isConnected;
 };

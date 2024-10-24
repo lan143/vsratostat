@@ -27,8 +27,7 @@ void DiscoveryMgr::loop()
 
 void DiscoveryMgr::sendDiscovery()
 {
-    ConfigEntity& config = _configMgr->getConfig();
-    if (!config.mqttIsHADiscovery) {
+    if (!_config.mqttIsHADiscovery) {
         Serial.println("discovery: skip send, disabled in config");
         _isSend = true;
         return;
@@ -68,7 +67,6 @@ std::string DiscoveryMgr::buildTopicName(const char* prefix, const char* type, c
 
 bool DiscoveryMgr::publishClimateConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     const char* climateModes[2];
@@ -87,24 +85,24 @@ bool DiscoveryMgr::publishClimateConfig()
             true
     );
     climateConfig.setCurrentTemperatureTemplate(climateCurrentTemperatureTemplate);
-    climateConfig.setCurrentTemperatureTopic(config.mqttStateTopic);
+    climateConfig.setCurrentTemperatureTopic(_config.mqttStateTopic);
     climateConfig.setMinTemp(CENTRAL_HEATING_MIN_TEMP);
     climateConfig.setMaxTemp(CENTRAL_HEATING_MAX_TEMP);
     climateConfig.setModeCommandTemplate(climateModeCommandTemple);
-    climateConfig.setModeCommandTopic(config.mqttCommandTopic);
+    climateConfig.setModeCommandTopic(_config.mqttCommandTopic);
     climateConfig.setModeStateTemplate(climateModeStateTemplate);
-    climateConfig.setModeStateTopic(config.mqttStateTopic);
+    climateConfig.setModeStateTopic(_config.mqttStateTopic);
     climateConfig.setTemperatureCommandTemplate(climateTemperatureCommandTemplate);
-    climateConfig.setTemperatureCommandTopic(config.mqttCommandTopic);
+    climateConfig.setTemperatureCommandTopic(_config.mqttCommandTopic);
     climateConfig.setTemperatureStateTemplate(climateTemperatureStateTemplate);
-    climateConfig.setTemperatureStateTopic(config.mqttStateTopic);
+    climateConfig.setTemperatureStateTopic(_config.mqttStateTopic);
     climateConfig.setModes(climateModes, 2);
     climateConfig.setPayloadOff(climatePayloadOff);
     climateConfig.setPayloadOn(climatePayloadOn);
 
     std::string climateConfigJSON = climateConfig.marshalJSON();
     std::string topicName = buildTopicName(
-        config.mqttHADiscoveryPrefix,
+        _config.mqttHADiscoveryPrefix,
         climateName,
         chipID,
         boilerName
@@ -115,7 +113,6 @@ bool DiscoveryMgr::publishClimateConfig()
 
 bool DiscoveryMgr::publishHotWaterConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     const char* hotWaterModes[2];
@@ -134,26 +131,25 @@ bool DiscoveryMgr::publishHotWaterConfig()
             true
     );
     hotWaterConfig.setModeCommandTemplate(hotWaterModeCommandTemplate);
-    hotWaterConfig.setModeCommandTopic(config.mqttCommandTopic);
+    hotWaterConfig.setModeCommandTopic(_config.mqttCommandTopic);
     hotWaterConfig.setModeStateTemplate(hotWaterModeStateTemplate);
-    hotWaterConfig.setModeStateTopic(config.mqttStateTopic);
+    hotWaterConfig.setModeStateTopic(_config.mqttStateTopic);
     hotWaterConfig.setCurrentTemperatureTemplate(hotWaterCurrentTemperatureTemplate);
-    hotWaterConfig.setCurrentTemperatureTopic(config.mqttStateTopic);
+    hotWaterConfig.setCurrentTemperatureTopic(_config.mqttStateTopic);
     hotWaterConfig.setMinTemp(WATER_HEATING_MIN_TEMP);
     hotWaterConfig.setMaxTemp(WATER_HEATING_MAX_TEMP);
     hotWaterConfig.setTemperatureCommandTemplate(hotWaterTemperatureCommandTemplate);
-    hotWaterConfig.setTemperatureCommandTopic(config.mqttCommandTopic);
+    hotWaterConfig.setTemperatureCommandTopic(_config.mqttCommandTopic);
     hotWaterConfig.setModes(hotWaterModes, 2);
 
     std::string hotWaterConfigJSON = hotWaterConfig.marshalJSON();
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, waterHeaterName, chipID, hotWaterName);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, waterHeaterName, chipID, hotWaterName);
 
     return _mqtt->publish(topicName.c_str(), hotWaterConfigJSON.c_str(), true);
 }
 
 bool DiscoveryMgr::publishModulationSensorConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     char uniqueID[50];
@@ -167,11 +163,11 @@ bool DiscoveryMgr::publishModulationSensorConfig()
             &uniqueID[0],
             true
     );
-    modulationSensorConfig.setStateTopic(config.mqttStateTopic);
+    modulationSensorConfig.setStateTopic(_config.mqttStateTopic);
     modulationSensorConfig.setValueTemplate(modulationSensorValueTemplate);
     modulationSensorConfig.setUnitOfMeasurement(percentSymbol);
 
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, &sensorName[0], chipID, &modulationSensorName[0]);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, &sensorName[0], chipID, &modulationSensorName[0]);
     std::string modulationSensorConfigJSON = modulationSensorConfig.marshalJSON();
 
     return _mqtt->publish(topicName.c_str(), modulationSensorConfigJSON.c_str(), true);
@@ -179,7 +175,6 @@ bool DiscoveryMgr::publishModulationSensorConfig()
 
 bool DiscoveryMgr::publishHotWaterSensorConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     char uniqueID[50];
@@ -193,12 +188,12 @@ bool DiscoveryMgr::publishHotWaterSensorConfig()
             uniqueID,
             true
     );
-    hotWaterSensorConfig.setStateTopic(config.mqttStateTopic);
+    hotWaterSensorConfig.setStateTopic(_config.mqttStateTopic);
     hotWaterSensorConfig.setValueTemplate(hotWaterSensorValueTemplate);
     hotWaterSensorConfig.setPayloadOn(climatePayloadOn);
     hotWaterSensorConfig.setPayloadOff(climatePayloadOff);
 
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, binarySensorName, chipID, hotWaterSensorName);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, binarySensorName, chipID, hotWaterSensorName);
     std::string hotWaterSensorConfigJSON = hotWaterSensorConfig.marshalJSON();
 
     return _mqtt->publish(topicName.c_str(), hotWaterSensorConfigJSON.c_str(), true);
@@ -206,7 +201,6 @@ bool DiscoveryMgr::publishHotWaterSensorConfig()
 
 bool DiscoveryMgr::publishFlameSensorConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     char uniqueID[50];
@@ -221,12 +215,12 @@ bool DiscoveryMgr::publishFlameSensorConfig()
             true
     );
     flameSensorConfig.setDeviceClass(deviceClassBinarySensorHeat);
-    flameSensorConfig.setStateTopic(config.mqttStateTopic);
+    flameSensorConfig.setStateTopic(_config.mqttStateTopic);
     flameSensorConfig.setValueTemplate(flameSensorValueTemplate);
     flameSensorConfig.setPayloadOn(climatePayloadOn);
     flameSensorConfig.setPayloadOff(climatePayloadOff);
 
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, binarySensorName, chipID, flameSensorName);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, binarySensorName, chipID, flameSensorName);
     std::string flameSensorConfigJSON = flameSensorConfig.marshalJSON();
 
     return _mqtt->publish(topicName.c_str(), flameSensorConfigJSON.c_str(), true);
@@ -234,7 +228,6 @@ bool DiscoveryMgr::publishFlameSensorConfig()
 
 bool DiscoveryMgr::publishFaultSensorConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     char uniqueID[50];
@@ -249,12 +242,12 @@ bool DiscoveryMgr::publishFaultSensorConfig()
             true
     );
     faultSensorConfig.setDeviceClass(deviceClassBinarySensorProblem);
-    faultSensorConfig.setStateTopic(config.mqttStateTopic);
+    faultSensorConfig.setStateTopic(_config.mqttStateTopic);
     faultSensorConfig.setValueTemplate(faultSensorValueTemplate);
     faultSensorConfig.setPayloadOn(climatePayloadOn);
     faultSensorConfig.setPayloadOff(climatePayloadOff);
 
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, &binarySensorName[0], chipID, &faultSensorName[0]);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, &binarySensorName[0], chipID, &faultSensorName[0]);
     std::string faultSensorConfigJSON = faultSensorConfig.marshalJSON();
 
     return _mqtt->publish(topicName.c_str(), faultSensorConfigJSON.c_str(), true);
@@ -262,7 +255,6 @@ bool DiscoveryMgr::publishFaultSensorConfig()
 
 bool DiscoveryMgr::publishResetButtonConfig()
 {
-    ConfigEntity& config = _configMgr->getConfig();
     const char* chipID = getChipID();
 
     char uniqueID[50];
@@ -277,11 +269,11 @@ bool DiscoveryMgr::publishResetButtonConfig()
             true
     );
     resetButtonConfig.setDeviceClass(deviceClassButtonRestart);
-    resetButtonConfig.setCommandTopic(config.mqttCommandTopic);
+    resetButtonConfig.setCommandTopic(_config.mqttCommandTopic);
     resetButtonConfig.setCommandTemplate(resetButtonCommandTemplate);
     resetButtonConfig.setPayloadPress(climatePayloadOn);
 
-    std::string topicName = buildTopicName(config.mqttHADiscoveryPrefix, &buttonName[0], chipID, &resetButtonName[0]);
+    std::string topicName = buildTopicName(_config.mqttHADiscoveryPrefix, &buttonName[0], chipID, &resetButtonName[0]);
     std::string resetButtonConfigJSON = resetButtonConfig.marshalJSON();
 
     return _mqtt->publish(topicName.c_str(), resetButtonConfigJSON.c_str(), true);

@@ -5,7 +5,7 @@
 #include "utils/Utils.h"
 
 Boiler::Boiler(
-    Config::ConfigMgr<ConfigEntity>* configMgr,
+    EDConfig::ConfigMgr<Config>* configMgr,
     OpenTherm* openTherm,
     StateProducer* stateProducer
 ) : _configMgr(configMgr), _openTherm(openTherm), _stateProducer(stateProducer)
@@ -21,7 +21,7 @@ void Boiler::init()
     pinMode(RESET_RELAY_PIN, OUTPUT);
     digitalWrite(RESET_RELAY_PIN, HIGH);
 
-    ConfigEntity& config = _configMgr->getConfig();
+    Config& config = _configMgr->getConfig();
     _current.setCentralHeatingOn(config.isCentralHeatingEnabled);
     _current.setCentralHeatingSetPoint(config.centralHeatingSetPoint);
     _current.setHotWaterOn(config.isHotWaterEnabled);
@@ -107,7 +107,7 @@ void Boiler::setCentralHeatingOn(bool isOn)
 {
     _current.setCentralHeatingOn(isOn);
 
-    ConfigEntity& config = _configMgr->getConfig();
+    Config& config = _configMgr->getConfig();
     config.isCentralHeatingEnabled = isOn;
     _configMgr->store();
 }
@@ -116,7 +116,7 @@ void Boiler::setCentralHeatingSetPoint(float setPoint)
 {
     _current.setCentralHeatingSetPoint(setPoint);
 
-    ConfigEntity& config = _configMgr->getConfig();
+    Config& config = _configMgr->getConfig();
     config.centralHeatingSetPoint = setPoint;
     _configMgr->store();
 }
@@ -125,7 +125,7 @@ void Boiler::setHotWaterOn(bool isOn)
 {
     _current.setHotWaterOn(isOn);
 
-    ConfigEntity& config = _configMgr->getConfig();
+    Config& config = _configMgr->getConfig();
     config.isHotWaterEnabled = isOn;
     _configMgr->store();
 }
@@ -134,7 +134,7 @@ void Boiler::setHotWaterSetPoint(float setPoint)
 {
     _current.setHotWaterSetPoint(setPoint);
 
-    ConfigEntity& config = _configMgr->getConfig();
+    Config& config = _configMgr->getConfig();
     config.hotWaterSetPoint = setPoint;
     _configMgr->store();
 }

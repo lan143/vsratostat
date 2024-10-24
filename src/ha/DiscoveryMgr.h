@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <ConfigMgr.h>
 
-#include "config/ConfigEntity.h"
+#include "config/Config.h"
 #include "mqtt/MQTT.h"
 #include "thermostat/BoilerConstant.h"
 #include "entity/BinarySensor.h"
@@ -64,10 +64,9 @@ class DiscoveryMgr
 {
 public:
     DiscoveryMgr(
-        Config::ConfigMgr<ConfigEntity>* configMgr,
+        Config& config,
         MQTT* mqtt
-    ) : _configMgr(configMgr), _mqtt(mqtt)
-    {
+    ) : _config(config), _mqtt(mqtt) {
         _isSend = false;
         _lastSendTime = 0;
     }
@@ -90,7 +89,7 @@ private:
     Device _device;
 
 private:
-    Config::ConfigMgr<ConfigEntity>* _configMgr;
+    Config& _config;
     MQTT* _mqtt;
 
 private:
