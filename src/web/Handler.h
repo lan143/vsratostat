@@ -11,10 +11,15 @@
 
 #include "config/Config.h"
 #include "thermostat/Boiler.h"
+#include "wifi/WiFiMgr.h"
 
 class Handler {
 public:
-    Handler(EDConfig::ConfigMgr<Config>* configMgr, Boiler* boiler) : _configMgr(configMgr), _boiler(boiler) {
+    Handler(
+        EDConfig::ConfigMgr<Config>* configMgr,
+        Boiler* boiler,
+        WiFiMgr* wifiMgr
+    ) : _configMgr(configMgr), _boiler(boiler), _wifiMgr(wifiMgr) {
         _server = new AsyncWebServer(80);
     }
 
@@ -24,4 +29,5 @@ private:
     AsyncWebServer* _server;
     EDConfig::ConfigMgr<Config>* _configMgr;
     Boiler* _boiler;
+    WiFiMgr* _wifiMgr;
 };

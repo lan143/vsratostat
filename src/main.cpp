@@ -2,6 +2,7 @@
 #include <SPIFFS.h>
 #include <OpenTherm.h>
 #include <ConfigMgr.h>
+#include <esp_log.h>
 
 #include "defines.h"
 #include "config/Config.h"
@@ -21,7 +22,7 @@ WiFiMgr wifiMgr(configMgr.getConfig());
 StateProducer stateProducer(&mqtt);
 Boiler boiler(&configMgr, &openTherm, &stateProducer);
 CommandConsumer commandConsumer(&boiler);
-Handler handler(&configMgr, &boiler);
+Handler handler(&configMgr, &boiler, &wifiMgr);
 
 void ICACHE_RAM_ATTR handleInterrupt()
 {
@@ -29,6 +30,9 @@ void ICACHE_RAM_ATTR handleInterrupt()
 }
 
 void setup() {
+    ESP_LOGI("setup", "Vsratostat");
+    ESP_LOGI("setup", "start");
+
     randomSeed(micros());
 
     Serial.begin(SERIAL_SPEED);
@@ -52,6 +56,8 @@ void setup() {
     commandConsumer.init(configMgr.getConfig().mqttCommandTopic);
     mqtt.subscribe(&commandConsumer);
     haDiscoveryMgr.init();
+
+    ESP_LOGI("setup", "complete");
 }
 
 void loop()

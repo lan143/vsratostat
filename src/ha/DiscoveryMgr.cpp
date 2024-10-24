@@ -1,6 +1,7 @@
 #include <list>
-#include "../defines.h"
-#include "../utils/Utils.h"
+#include <esp_log.h>
+#include "defines.h"
+#include "utils/Utils.h"
 #include "DiscoveryMgr.h"
 #include "enum/EntityCategory.h"
 
@@ -28,13 +29,13 @@ void DiscoveryMgr::loop()
 void DiscoveryMgr::sendDiscovery()
 {
     if (!_config.mqttIsHADiscovery) {
-        Serial.println("discovery: skip send, disabled in config");
+        ESP_LOGD("discovery_mgr", "skip send, disabled in config");
         _isSend = true;
         return;
     }
 
     if (!_mqtt->isConnected()) {
-        Serial.println("discovery: send failed, mqtt is not connected");
+        ESP_LOGD("discovery_mgr", "send failed, mqtt is not connected");
         return;
     }
 
@@ -47,12 +48,12 @@ void DiscoveryMgr::sendDiscovery()
         || !publishFaultSensorConfig()
         || !publishResetButtonConfig()
     ) {
-        Serial.println("discovery: send failed, some errors");
+        ESP_LOGE("discovery_mgr", "send failed, some errors");
 
         return;
     }
 
-    Serial.println("discovery: successfuly sent");
+    ESP_LOGI("discovery_mgr", "successfuly sent");
 
     _isSend = true;
 }

@@ -1,14 +1,16 @@
 #include <Arduino.h>
+#include <esp_log.h>
 #include "CommandConsumer.h"
 #include "../entity/CommandEntity.h"
 
 void CommandConsumer::consume(std::string payload)
 {
-    Serial.println("command consumer: handle");
+    ESP_LOGD("command_consumer", "handle");
 
     CommandEntity command;
     if (!command.unmarshalJSON(payload.c_str())) {
-        Serial.printf("command consumer: cant unmarshal command");
+        ESP_LOGE("command_consumer", "cant unmarshal command");
+        
         return;
     }
 

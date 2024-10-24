@@ -14,30 +14,8 @@ public:
     MQTT(Config& config) : _config(config) { }
     void init();
     bool isConnected() { return _client.connected(); }
-    bool publish(const char* topic, const char* payload, boolean retained)
-    {
-        if (!isConnected()) {
-            return false;
-        }
-
-        if (_client.publish(topic, 1, retained, payload)) {
-            Serial.printf("mqtt: publish successful, topic: %s, payload: %s\n", topic, payload);
-            return true;
-        } else {
-            Serial.printf("mqtt: publish failed, topic: %s, payload: %s\n", topic, payload);
-            return false;
-        }
-    }
-    void subscribe(Consumer* consumer)
-    {
-        Serial.printf("mqtt: subscribe, topic: %s\n", consumer->getTopicName());
-
-        _consumers.push_back(consumer);
-
-        if (_isConfigured && _client.connected()) {
-            _client.subscribe(consumer->getTopicName(), 1);
-        }
-    }
+    bool publish(const char* topic, const char* payload, boolean retained);
+    void subscribe(Consumer* consumer);
     void loop();
 
 private:

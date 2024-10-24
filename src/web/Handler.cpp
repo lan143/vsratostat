@@ -1,7 +1,8 @@
 #include <ArduinoJSON.h>
 #include <FS.h>
 #include <SPIFFS.h>
-#include "../defines.h"
+#include <esp_system.h>
+#include "defines.h"
 #include "Handler.h"
 #include "utils/String.h"
 #include "utils/Json.h"
@@ -159,8 +160,6 @@ void Handler::init()
             return;
         }
 
-        Serial.printf("ishaDiscoveryEnabled: %s", ishaDiscoveryEnabled->value().c_str());
-
         strcpy(config.mqttHost, host->value().c_str());
         config.mqttPort = (uint16_t)mqttPort;
         strcpy(config.mqttLogin, login->value().c_str());
@@ -183,14 +182,61 @@ void Handler::init()
     _server->on("/api/settings", HTTP_POST, [this](AsyncWebServerRequest *request) {
     });
 
-    _server->on("/api/wifi/status", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    _server->on("/api/status", HTTP_GET, [this](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
-        /*DynamicJsonDocument json(200);
-        json["status"] = _wifiService->getWifiStatus();
 
-        serializeJson(json, *response);*/
-        response->print("{\"status\": \"unimplemented\"}");
+        std::string data = buildJson([this](JsonObject entity) {
+            if (_wifiMgr->isConnected()) {
+                entity[F("wifiStatus")] = "connected";
+            } else {
+                entity[F("wifiStatus")] = "disconnected";
+            }
+
+            entity[F("freeHeap")] = ESP.getFreeHeap();
+            entity[F("uptime")] = millis() / 1000;
+
+            esp_reset_reason_t reason = esp_reset_reason();
+
+            switch (reason) {
+                case ESP_RST_POWERON:
+                    entity[F("lastResetReason")] = "Power-on Reset";
+                    break;
+                case ESP_RST_EXT:
+                    entity[F("lastResetReason")] = "External Reset";
+                    break;
+                case ESP_RST_SW:
+                    entity[F("lastResetReason")] = "Software Reset";
+                    break;
+                case ESP_RST_PANIC:
+                    entity[F("lastResetReason")] = "Panic Reset";
+                    break;
+                case ESP_RST_INT_WDT:
+                    entity[F("lastResetReason")] = "Interrupt Watchdog Reset";
+                    break;
+                case ESP_RST_TASK_WDT:
+                    entity[F("lastResetReason")] = "Task Watchdog Reset";
+                    break;
+                case ESP_RST_WDT:
+                    entity[F("lastResetReason")] = "Other Watchdog Reset";
+                    break;
+                case ESP_RST_DEEPSLEEP:
+                    entity[F("lastResetReason")] = "Wake from Deep Sleep";
+                    break;
+                case ESP_RST_BROWNOUT:
+                    entity[F("lastResetReason")] = "Brownout Reset";
+                    break;
+                case ESP_RST_SDIO:
+                    entity[F("lastResetReason")] = "SDIO Reset";
+                    break;
+                default:
+                    entity[F("lastResetReason")] = "Unknown";
+                    break;
+            }
+        });
+        response->print(data.c_str());
         request->send(response);
+
+        millis();
     });
 
     _server->on("/api/reboot", HTTP_POST, [this](AsyncWebServerRequest *request) {
