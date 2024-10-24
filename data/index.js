@@ -1,8 +1,8 @@
 var updateWiFiStatusInProgress = false;
 var updateBoilerStatusInProgress = false;
 
-String.prototype.toHHMMSS = function () {
-    var sec_num = parseInt(this, 10);
+function toHHMMSS(time) {
+    var sec_num = parseInt(time, 10);
     var hours   = Math.floor(sec_num / 3600);
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
@@ -53,7 +53,7 @@ function updateWiFiStatus() {
         dataType: 'json',
         success: function (data) {
             $('#wifi-status').html(data.wifiStatus);
-            $('#uptime').html(data.uptime.toHHMMSS());
+            $('#uptime').html(toHHMMSS(data.uptime));
             $('#freeHeap').html(data.freeHeap + " bytes");
             $('#lastResetReason').html(data.lastResetReason);
         },

@@ -30,16 +30,17 @@ void ICACHE_RAM_ATTR handleInterrupt()
 }
 
 void setup() {
-    ESP_LOGI("setup", "Vsratostat");
-    ESP_LOGI("setup", "start");
-
     randomSeed(micros());
 
     Serial.begin(SERIAL_SPEED);
+
+    ESP_LOGI("setup", "Vsratostat");
+    ESP_LOGI("setup", "start");
+
     SPIFFS.begin(true);
 
     configMgr.setDefault([](Config& config) {
-        snprintf(config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", getMacAddress());
+        snprintf(config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", getMacAddress().c_str());
         snprintf(config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat/%s/state", getChipID());
         snprintf(config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat/%s/set", getChipID());
         snprintf(config.mqttHADiscoveryPrefix, MQTT_TOPIC_LEN, "homeassistant");
