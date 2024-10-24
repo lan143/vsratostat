@@ -15,7 +15,7 @@
 #define MQTT_PASSWORD_LEN 32
 #define MQTT_TOPIC_LEN 64
 
-struct Config
+struct ConfigEntity
 {
     uint8_t version = CURRENT_VERSION;
 

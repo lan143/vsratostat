@@ -3,9 +3,9 @@
 
 void WiFiMgr::init()
 {
-    Config* config = _configMgr->getConfig();
+    ConfigEntity& config = _configMgr->getConfig();
 
-    if (!config->isAPMode) {
+    if (!config.isAPMode) {
         WiFi.mode(WIFI_STA);
         WiFi.onEvent([this](arduino_event_id_t event, arduino_event_info_t info) {
             if (event == ARDUINO_EVENT_WIFI_STA_CONNECTED) {
@@ -17,9 +17,9 @@ void WiFiMgr::init()
             }
         });
         
-        WiFi.begin(config->wifiSSID, config->wifiPassword);
+        WiFi.begin(config.wifiSSID, config.wifiPassword);
     } else {
         WiFi.mode(WIFI_AP);
-        WiFi.softAP(config->wifiAPSSID, config->wifiAPHasPassword ? config->wifiAPPassword : NULL);
+        WiFi.softAP(config.wifiAPSSID, config.wifiAPHasPassword ? config.wifiAPPassword : NULL);
     }
 }

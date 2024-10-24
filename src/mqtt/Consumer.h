@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../config/Config.h"
+#include "config/ConfigEntity.h"
 
 class Consumer
 {

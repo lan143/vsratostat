@@ -5,9 +5,9 @@
 
 void MQTT::init()
 {
-    Config* config = _configMgr->getConfig();
+    ConfigEntity& config = _configMgr->getConfig();
 
-    if (strlen(config->mqttHost) == 0) {
+    if (strlen(config.mqttHost) == 0) {
         return;
     }
 
@@ -26,7 +26,7 @@ void MQTT::init()
     _client.onDisconnect([this](AsyncMqttClientDisconnectReason reason) {
         Serial.println("mqtt: disconnected");
     });
-    _client.setServer(config->mqttHost, config->mqttPort);
+    _client.setServer(config.mqttHost, config.mqttPort);
 
     _isConfigured = true;
 }

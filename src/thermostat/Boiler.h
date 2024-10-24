@@ -1,8 +1,9 @@
 #pragma once
 
 #include <OpenTherm.h>
+#include <ConfigMgr.h>
 
-#include "config/ConfigMgr.h"
+#include "config/ConfigEntity.h"
 #include "mqtt/Producer/StateProducer.h"
 #include "BoilerState.h"
 #include "BoilerConstant.h"
@@ -11,7 +12,7 @@ class Boiler
 {
 public:
     Boiler(
-        ConfigMgr* configMgr,
+        Config::ConfigMgr<ConfigEntity>* configMgr,
         OpenTherm* openTherm,
         StateProducer* stateProducer
     );
@@ -37,7 +38,7 @@ private:
     BoilerState _prev;
 
 private:
-    ConfigMgr* _configMgr;
+    Config::ConfigMgr<ConfigEntity>* _configMgr;
     OpenTherm* _openTherm;
     StateProducer* _stateProducer;
 

@@ -1,9 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
-#include "../config/ConfigMgr.h"
-#include "../mqtt/MQTT.h"
-#include "../thermostat/BoilerConstant.h"
+#include <ConfigMgr.h>
+
+#include "config/ConfigEntity.h"
+#include "mqtt/MQTT.h"
+#include "thermostat/BoilerConstant.h"
 #include "entity/BinarySensor.h"
 #include "entity/Button.h"
 #include "entity/Climate.h"
@@ -62,7 +64,7 @@ class DiscoveryMgr
 {
 public:
     DiscoveryMgr(
-        ConfigMgr* configMgr,
+        Config::ConfigMgr<ConfigEntity>* configMgr,
         MQTT* mqtt
     ) : _configMgr(configMgr), _mqtt(mqtt)
     {
@@ -88,7 +90,7 @@ private:
     Device _device;
 
 private:
-    ConfigMgr* _configMgr;
+    Config::ConfigMgr<ConfigEntity>* _configMgr;
     MQTT* _mqtt;
 
 private:

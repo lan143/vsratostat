@@ -1,15 +1,17 @@
 #pragma once
 
 #include <Arduino.h>
-#include <list>
+#include <ConfigMgr.h>
 #include <AsyncMqttClient.h>
-#include "../config/ConfigMgr.h"
-#include "../utils/Utils.h"
+#include <list>
+
+#include "config/ConfigEntity.h"
+#include "utils/Utils.h"
 #include "Consumer.h"
 
 class MQTT {
 public:
-    MQTT(ConfigMgr* configMgr) : _configMgr(configMgr) { }
+    MQTT(Config::ConfigMgr<ConfigEntity>* configMgr) : _configMgr(configMgr) { }
     void init();
     bool isConnected() { return _client.connected(); }
     bool publish(const char* topic, const char* payload, boolean retained)
@@ -44,7 +46,7 @@ private:
 private:
     AsyncMqttClient _client;
     
-    ConfigMgr* _configMgr;
+    Config::ConfigMgr<ConfigEntity>* _configMgr;
     uint64_t _lastReconnectTime = 0;
     bool _isConfigured = false;
     std::list<Consumer*> _consumers;

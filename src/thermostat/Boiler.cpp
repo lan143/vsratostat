@@ -5,7 +5,7 @@
 #include "utils/Utils.h"
 
 Boiler::Boiler(
-    ConfigMgr* configMgr,
+    Config::ConfigMgr<ConfigEntity>* configMgr,
     OpenTherm* openTherm,
     StateProducer* stateProducer
 ) : _configMgr(configMgr), _openTherm(openTherm), _stateProducer(stateProducer)
@@ -21,11 +21,11 @@ void Boiler::init()
     pinMode(RESET_RELAY_PIN, OUTPUT);
     digitalWrite(RESET_RELAY_PIN, HIGH);
 
-    Config* config = _configMgr->getConfig();
-    _current.setCentralHeatingOn(config->isCentralHeatingEnabled);
-    _current.setCentralHeatingSetPoint(config->centralHeatingSetPoint);
-    _current.setHotWaterOn(config->isHotWaterEnabled);
-    _current.setHotWaterSetPoint(config->hotWaterSetPoint);
+    ConfigEntity& config = _configMgr->getConfig();
+    _current.setCentralHeatingOn(config.isCentralHeatingEnabled);
+    _current.setCentralHeatingSetPoint(config.centralHeatingSetPoint);
+    _current.setHotWaterOn(config.isHotWaterEnabled);
+    _current.setHotWaterSetPoint(config.hotWaterSetPoint);
 }
 
 void Boiler::loop()
@@ -107,8 +107,8 @@ void Boiler::setCentralHeatingOn(bool isOn)
 {
     _current.setCentralHeatingOn(isOn);
 
-    Config* config = _configMgr->getConfig();
-    config->isCentralHeatingEnabled = isOn;
+    ConfigEntity& config = _configMgr->getConfig();
+    config.isCentralHeatingEnabled = isOn;
     _configMgr->store();
 }
 
@@ -116,8 +116,8 @@ void Boiler::setCentralHeatingSetPoint(float setPoint)
 {
     _current.setCentralHeatingSetPoint(setPoint);
 
-    Config* config = _configMgr->getConfig();
-    config->centralHeatingSetPoint = setPoint;
+    ConfigEntity& config = _configMgr->getConfig();
+    config.centralHeatingSetPoint = setPoint;
     _configMgr->store();
 }
 
@@ -125,8 +125,8 @@ void Boiler::setHotWaterOn(bool isOn)
 {
     _current.setHotWaterOn(isOn);
 
-    Config* config = _configMgr->getConfig();
-    config->isHotWaterEnabled = isOn;
+    ConfigEntity& config = _configMgr->getConfig();
+    config.isHotWaterEnabled = isOn;
     _configMgr->store();
 }
 
@@ -134,8 +134,8 @@ void Boiler::setHotWaterSetPoint(float setPoint)
 {
     _current.setHotWaterSetPoint(setPoint);
 
-    Config* config = _configMgr->getConfig();
-    config->hotWaterSetPoint = setPoint;
+    ConfigEntity& config = _configMgr->getConfig();
+    config.hotWaterSetPoint = setPoint;
     _configMgr->store();
 }
 
