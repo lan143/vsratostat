@@ -1,11 +1,10 @@
-#include <ArduinoJson.h>
-#include "StateEntity.h"
+#include <Json.h>
 #include "defines.h"
-#include "utils/Json.h"
+#include "StateEntity.h"
 
 std::string StateEntity::marshalJSON()
 {
-    std::string payload = buildJson([this](JsonObject entity) {
+    std::string payload = EDUtils::buildJson([this](JsonObject entity) {
         entity[F("centralHeatingMode")] = _centralHeatingMode;
         entity[F("centralHeatingSetPoint")] = _centralHeatingSetPoint;
         entity[F("centralHeatingCurrentTemperature")] = _centralHeatingCurrentTemperature;

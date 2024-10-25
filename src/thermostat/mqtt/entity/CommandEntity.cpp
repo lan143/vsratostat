@@ -1,12 +1,11 @@
 #include <ArduinoJson.h>
-
+#include <Json.h>
 #include "defines.h"
 #include "CommandEntity.h"
-#include "utils/Json.h"
 
 bool CommandEntity::unmarshalJSON(const char* data)
 {
-    return parseJson(data, [this](JsonObject root) {
+    return EDUtils::parseJson(data, [this](JsonObject root) {
         if (root.containsKey(F("centralHeatingMode"))) {
             _hasCentralHeatingMode = true;
             _centralHeatingMode = root[F("centralHeatingMode")].as<const char*>();

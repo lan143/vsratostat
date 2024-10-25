@@ -1,10 +1,10 @@
+#include <Json.h>
+#include "defines.h"
 #include "WaterHeater.h"
-#include "../../defines.h"
-#include "utils/Json.h"
 
 std::string WaterHeater::marshalJSON()
 {
-    return buildJson([this](JsonObject entity) {
+    return EDUtils::buildJson([this](JsonObject entity) {
         buildBaseField(entity);
 
         if (_modeCommandTemplate) {

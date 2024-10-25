@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <esp_log.h>
-#include "utils/Utils.h"
+#include <Utils.h>
 #include "MQTT.h"
 
 void MQTT::init()

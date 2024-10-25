@@ -1,9 +1,9 @@
+#include <Json.h>
 #include "BinarySensor.h"
-#include "utils/Json.h"
 
 std::string BinarySensor::marshalJSON()
 {
-    return buildJson([this](JsonObject entity) {
+    return EDUtils::buildJson([this](JsonObject entity) {
         buildBaseField(entity);
 
         if (_deviceClass) {

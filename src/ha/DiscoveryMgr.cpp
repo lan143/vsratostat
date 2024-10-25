@@ -1,7 +1,7 @@
 #include <list>
 #include <esp_log.h>
+#include <Utils.h>
 #include "defines.h"
-#include "utils/Utils.h"
 #include "DiscoveryMgr.h"
 #include "enum/EntityCategory.h"
 
@@ -14,7 +14,7 @@ void DiscoveryMgr::init()
     _device.setSWVersion(deviceFWVersion);
     _device.setModel(deviceModel);
     _device.setName(deviceName);
-    _device.addIdentifier(getMacAddress());
+    _device.addIdentifier(EDUtils::getMacAddress());
     _device.setManufacturer(deviceManufacturer);
 }
 
@@ -68,7 +68,7 @@ std::string DiscoveryMgr::buildTopicName(const char* prefix, const char* type, c
 
 bool DiscoveryMgr::publishClimateConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     const char* climateModes[2];
     climateModes[0] = &modeOff[0];
@@ -114,7 +114,7 @@ bool DiscoveryMgr::publishClimateConfig()
 
 bool DiscoveryMgr::publishHotWaterConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     const char* hotWaterModes[2];
     hotWaterModes[0] = &modeOff[0];
@@ -151,7 +151,7 @@ bool DiscoveryMgr::publishHotWaterConfig()
 
 bool DiscoveryMgr::publishModulationSensorConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     char uniqueID[50];
     snprintf(uniqueID, 50, "%s_modulation_vsratostat", chipID);
@@ -176,7 +176,7 @@ bool DiscoveryMgr::publishModulationSensorConfig()
 
 bool DiscoveryMgr::publishHotWaterSensorConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     char uniqueID[50];
     snprintf(uniqueID, 50, "%s_hot_water_sensor_vsratostat", chipID);
@@ -202,7 +202,7 @@ bool DiscoveryMgr::publishHotWaterSensorConfig()
 
 bool DiscoveryMgr::publishFlameSensorConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     char uniqueID[50];
     snprintf(uniqueID, 50, "%s_flame_sensor_vsratostat", chipID);
@@ -229,7 +229,7 @@ bool DiscoveryMgr::publishFlameSensorConfig()
 
 bool DiscoveryMgr::publishFaultSensorConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     char uniqueID[50];
     snprintf(uniqueID, 50, "%s_fault_sensor_vsratostat", chipID);
@@ -256,7 +256,7 @@ bool DiscoveryMgr::publishFaultSensorConfig()
 
 bool DiscoveryMgr::publishResetButtonConfig()
 {
-    const char* chipID = getChipID();
+    const char* chipID = EDUtils::getChipID();
 
     char uniqueID[50];
     snprintf(uniqueID, 50, "%s_reset_errors_vsratostat", chipID);

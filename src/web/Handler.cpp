@@ -2,10 +2,12 @@
 #include <FS.h>
 #include <SPIFFS.h>
 #include <esp_system.h>
+#include <ExtStrings.h>
+#include <Json.h>
+#include <cstring>
+#include <string.h>
 #include "defines.h"
 #include "Handler.h"
-#include "utils/String.h"
-#include "utils/Json.h"
 
 void Handler::init()
 {
@@ -32,7 +34,7 @@ void Handler::init()
     _server->on("/api/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
 
-        std::string payload = buildJson([this](JsonObject entity) {
+        std::string payload = EDUtils::buildJson([this](JsonObject entity) {
             Config& config = _configMgr->getConfig();
 
             entity["wifiSSID"] = config.wifiSSID;
@@ -88,8 +90,8 @@ void Handler::init()
         }
 
         Config& config = _configMgr->getConfig();
-        strcpy(config.wifiSSID, wifiSSID->value().c_str());
-        strcpy(config.wifiPassword, wifiPassword->value().c_str());
+        std::strcpy(config.wifiSSID, wifiSSID->value().c_str());
+        std::strcpy(config.wifiPassword, wifiPassword->value().c_str());
         config.isAPMode = false;
 
         _configMgr->store();
@@ -125,7 +127,7 @@ void Handler::init()
         }
 
         int mqttPort;
-        if (str2int(&mqttPort, port->value().c_str(), 10) != STR2INT_SUCCESS) {
+        if (EDUtils::str2int(&mqttPort, port->value().c_str(), 10) != EDUtils::STR2INT_SUCCESS) {
             request->send(422, "application/json", "{\"message\": \"Incorrect port\"}");
             return;
         }
@@ -185,7 +187,7 @@ void Handler::init()
     _server->on("/api/status", HTTP_GET, [this](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
 
-        std::string data = buildJson([this](JsonObject entity) {
+        std::string data = EDUtils::buildJson([this](JsonObject entity) {
             if (_wifiMgr->isConnected()) {
                 entity[F("wifiStatus")] = "connected";
             } else {

@@ -40,9 +40,9 @@ void setup() {
     SPIFFS.begin(true);
 
     configMgr.setDefault([](Config& config) {
-        snprintf(config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", getMacAddress().c_str());
-        snprintf(config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat/%s/state", getChipID());
-        snprintf(config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat/%s/set", getChipID());
+        snprintf(config.wifiAPSSID, WIFI_SSID_LEN, "Vsratostat_%s", EDUtils::getMacAddress().c_str());
+        snprintf(config.mqttStateTopic, MQTT_TOPIC_LEN, "vsratostat/%s/state", EDUtils::getChipID());
+        snprintf(config.mqttCommandTopic, MQTT_TOPIC_LEN, "vsratostat/%s/set", EDUtils::getChipID());
         snprintf(config.mqttHADiscoveryPrefix, MQTT_TOPIC_LEN, "homeassistant");
     });
     configMgr.load();

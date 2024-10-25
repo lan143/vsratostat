@@ -3,10 +3,10 @@
 #include <Arduino.h>
 #include <ConfigMgr.h>
 #include <AsyncMqttClient.h>
+#include <Utils.h>
 #include <list>
 
 #include "config/Config.h"
-#include "utils/Utils.h"
 #include "Consumer.h"
 
 class MQTT {

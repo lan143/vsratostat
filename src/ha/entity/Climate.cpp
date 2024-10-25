@@ -1,10 +1,10 @@
-#include "../../defines.h"
+#include <Json.h>
+#include "defines.h"
 #include "Climate.h"
-#include "utils/Json.h"
 
 std::string Climate::marshalJSON()
 {
-    return buildJson([this](JsonObject entity) {
+    return EDUtils::buildJson([this](JsonObject entity) {
         buildBaseField(entity);
 
         if (_currentTemperatureTemplate) {
