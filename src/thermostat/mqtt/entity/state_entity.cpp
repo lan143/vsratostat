@@ -14,6 +14,7 @@ std::string StateEntity::marshalJSON()
                 break;
         }
         
+        entity[F("centralHeatingState")] = _isFlameActive ? "heating" : "idle";
         entity[F("centralHeatingSetPoint")] = _centralHeatingSetPoint;
         entity[F("centralHeatingCurrentTemperature")] = _centralHeatingCurrentTemperature;
 

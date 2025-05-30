@@ -55,7 +55,9 @@ void Boiler::init(EDHA::DiscoveryMgr* discoveryMgr, EDHA::Device* device)
         ->setTemperatureStateTopic(config.mqttStateTopic)
         ->setModes(climateModes)
         ->setPayloadOff("false")
-        ->setPayloadOn("true");
+        ->setPayloadOn("true")
+        ->setActionTopic(config.mqttStateTopic)
+        ->setActionTemplate("{{ value_json.centralHeatingState }}");
 
         std::list<EDHA::Mode> howWaterModes;
         climateModes.push_back(EDHA::MODE_OFF);
