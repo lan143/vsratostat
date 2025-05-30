@@ -1,4 +1,3 @@
-#include <ArduinoJSON.h>
 #include <FS.h>
 #include <SPIFFS.h>
 #include <esp_system.h>
@@ -7,7 +6,7 @@
 #include <cstring>
 #include <string.h>
 #include "defines.h"
-#include "Handler.h"
+#include "handler.h"
 
 void Handler::init()
 {
@@ -39,10 +38,10 @@ void Handler::init()
 
             entity["wifiSSID"] = config.wifiSSID;
             entity["wifiPassword"] = config.wifiPassword;
-            entity["mqttHost"] = config.mqttHost;
-            entity["mqttPort"] = config.mqttPort;
-            entity["mqttLogin"] = config.mqttLogin;
-            entity["mqttPassword"] = config.mqttPassword;
+            entity["mqttHost"] = config.mqtt.host;
+            entity["mqttPort"] = config.mqtt.port;
+            entity["mqttLogin"] = config.mqtt.login;
+            entity["mqttPassword"] = config.mqtt.password;
             entity["mqttIsHADiscovery"] = config.mqttIsHADiscovery;
             entity["mqttHADiscoveryPrefix"] = config.mqttHADiscoveryPrefix;
             entity["mqttCommandTopic"] = config.mqttCommandTopic;
@@ -76,8 +75,8 @@ void Handler::init()
             return;
         }
 
-        AsyncWebParameter* wifiSSID = request->getParam("wifiSSID", true);
-        AsyncWebParameter* wifiPassword = request->getParam("wifiPassword", true);
+        const AsyncWebParameter* wifiSSID = request->getParam("wifiSSID", true);
+        const AsyncWebParameter* wifiPassword = request->getParam("wifiPassword", true);
 
         if (wifiSSID->value().length() > WIFI_SSID_LEN-1) {
             request->send(422, "application/json", "{\"message\": \"WiFi SSID lenght more 32 symbols\"}");
@@ -112,14 +111,14 @@ void Handler::init()
         }
 
         Config& config = _configMgr->getConfig();
-        AsyncWebParameter* host = request->getParam("host", true);
-        AsyncWebParameter* port = request->getParam("port", true);
-        AsyncWebParameter* login = request->getParam("login", true);
-        AsyncWebParameter* password = request->getParam("password", true);
-        AsyncWebParameter* haDiscoveryPrefix = request->getParam("haDiscoveryPrefix", true);
-        AsyncWebParameter* ishaDiscoveryEnabled = request->getParam("mqttIsHADiscovery", true);
-        AsyncWebParameter* stateTopic = request->getParam("stateTopic", true);
-        AsyncWebParameter* commandTopic = request->getParam("commandTopic", true);
+        const AsyncWebParameter* host = request->getParam("host", true);
+        const AsyncWebParameter* port = request->getParam("port", true);
+        const AsyncWebParameter* login = request->getParam("login", true);
+        const AsyncWebParameter* password = request->getParam("password", true);
+        const AsyncWebParameter* haDiscoveryPrefix = request->getParam("haDiscoveryPrefix", true);
+        const AsyncWebParameter* ishaDiscoveryEnabled = request->getParam("mqttIsHADiscovery", true);
+        const AsyncWebParameter* stateTopic = request->getParam("stateTopic", true);
+        const AsyncWebParameter* commandTopic = request->getParam("commandTopic", true);
 
         if (host->value().length() == 0 || host->value().length() > HOST_LEN-1) {
             request->send(422, "application/json", "{\"message\": \"MQTT host lenght invalid\"}");
@@ -162,10 +161,10 @@ void Handler::init()
             return;
         }
 
-        strcpy(config.mqttHost, host->value().c_str());
-        config.mqttPort = (uint16_t)mqttPort;
-        strcpy(config.mqttLogin, login->value().c_str());
-        strcpy(config.mqttPassword, password->value().c_str());
+        strcpy(config.mqtt.host, host->value().c_str());
+        config.mqtt.port = (uint16_t)mqttPort;
+        strcpy(config.mqtt.login, login->value().c_str());
+        strcpy(config.mqtt.password, password->value().c_str());
         strcpy(config.mqttHADiscoveryPrefix, haDiscoveryPrefix->value().c_str());
         strcpy(config.mqttStateTopic, stateTopic->value().c_str());
         strcpy(config.mqttCommandTopic, commandTopic->value().c_str());

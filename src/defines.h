@@ -1,6 +1,7 @@
 #pragma once
 
 #define SERIAL_SPEED 115200
+#define EEPROM_SIZE 1024
 
 #define OPENTERM_IN_PIN 33
 #define OPENTERM_OUT_PIN 32

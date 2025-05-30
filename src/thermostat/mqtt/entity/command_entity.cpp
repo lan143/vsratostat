@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <Json.h>
 #include "defines.h"
-#include "CommandEntity.h"
+#include "command_entity.h"
 
 bool CommandEntity::unmarshalJSON(const char* data)
 {

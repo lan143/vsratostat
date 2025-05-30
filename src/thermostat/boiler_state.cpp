@@ -1,4 +1,4 @@
-#include "BoilerState.h"
+#include "boiler_state.h"
 
 bool BoilerState::operator==(BoilerState& other)
 {

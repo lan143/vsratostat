@@ -2,13 +2,14 @@
 
 #include <OpenTherm.h>
 #include <ConfigMgr.h>
+#include <discovery.h>
+#include <ready.h>
 
-#include "config/Config.h"
-#include "mqtt/Producer/StateProducer.h"
-#include "BoilerState.h"
-#include "BoilerConstant.h"
+#include "config.h"
+#include "thermostat/mqtt/producer/state_producer.h"
+#include "boiler_state.h"
 
-class Boiler
+class Boiler : public EDHealthCheck::Ready
 {
 public:
     Boiler(
@@ -16,7 +17,7 @@ public:
         OpenTherm* openTherm,
         StateProducer* stateProducer
     );
-    void init();
+    void init(EDHA::DiscoveryMgr* discoveryMgr, EDHA::Device* device);
     void loop();
 
     void setCentralHeatingOn(bool isOn);
@@ -26,6 +27,8 @@ public:
     void resetErrors();
 
     BoilerState &getState() { return _current; }
+
+    EDHealthCheck::ReadyResult ready();
 
 private:
     void hvacInit();
@@ -39,7 +42,10 @@ private:
 
 private:
     EDConfig::ConfigMgr<Config>* _configMgr;
+
     OpenTherm* _openTherm;
+    int openThermFaultCount = 0;
+
     StateProducer* _stateProducer;
 
     bool _resetInProgress = false;

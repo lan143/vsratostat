@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Arduino.h>
-#include "mqtt/Consumer.h"
-#include "../../Boiler.h"
+#include <consumer.h>
+#include "thermostat/boiler.h"
 
-class CommandConsumer : public Consumer
+class CommandConsumer : public EDMQTT::Consumer
 {
 public:
     CommandConsumer(Boiler* boiler) : _boiler(boiler) {}

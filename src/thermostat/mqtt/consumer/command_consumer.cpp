@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <esp_log.h>
-#include "CommandConsumer.h"
-#include "../entity/CommandEntity.h"
+#include "command_consumer.h"
+#include "thermostat/mqtt/entity/command_entity.h"
 
 void CommandConsumer::consume(std::string payload)
 {
@@ -15,7 +15,7 @@ void CommandConsumer::consume(std::string payload)
     }
 
     if (command.hasCentralHeatingMode()) {
-        _boiler->setCentralHeatingOn(strcmp(command.getCentralHeatingMode(), modeOff) != 0);
+        _boiler->setCentralHeatingOn(strcmp(command.getCentralHeatingMode(), "off") != 0);
     }
 
     if (command.hasCentralHeatingSetPoint()) {
@@ -27,7 +27,7 @@ void CommandConsumer::consume(std::string payload)
     }
 
     if (command.hasHotWaterMode()) {
-        _boiler->setHotWaterOn(strcmp(command.getHotWaterMode(), modeOff) != 0);
+        _boiler->setHotWaterOn(strcmp(command.getHotWaterMode(), "off") != 0);
     }
 
     if (command.hasHotWaterSetPoint()) {

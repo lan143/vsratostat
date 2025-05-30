@@ -9,9 +9,9 @@
 #include <ESPAsyncWebServer.h>
 #include <ConfigMgr.h>
 
-#include "config/Config.h"
-#include "thermostat/Boiler.h"
-#include "wifi/WiFiMgr.h"
+#include "config.h"
+#include "thermostat/boiler.h"
+#include "wifi/wifi_mgr.h"
 
 class Handler {
 public:

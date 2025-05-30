@@ -1,6 +1,6 @@
 #include <WiFi.h>
 #include <esp_log.h>
-#include "WiFiMgr.h"
+#include "wifi_mgr.h"
 
 void WiFiMgr::init()
 {

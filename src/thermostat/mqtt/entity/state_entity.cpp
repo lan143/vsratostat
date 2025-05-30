@@ -1,14 +1,31 @@
 #include <Json.h>
 #include "defines.h"
-#include "StateEntity.h"
+#include "state_entity.h"
 
 std::string StateEntity::marshalJSON()
 {
     std::string payload = EDUtils::buildJson([this](JsonObject entity) {
-        entity[F("centralHeatingMode")] = _centralHeatingMode;
+        switch (_centralHeatingMode) {
+            case EDHA::MODE_OFF:
+                entity[F("centralHeatingMode")] = "off";
+                break;
+            case EDHA::MODE_HEAT:
+                entity[F("centralHeatingMode")] = "heat";
+                break;
+        }
+        
         entity[F("centralHeatingSetPoint")] = _centralHeatingSetPoint;
         entity[F("centralHeatingCurrentTemperature")] = _centralHeatingCurrentTemperature;
-        entity[F("hotWaterMode")] = _hotWaterMode;
+
+        switch (_hotWaterMode) {
+            case EDHA::MODE_OFF:
+                entity[F("hotWaterMode")] = "off";
+                break;
+            case EDHA::MODE_GAS:
+                entity[F("hotWaterMode")] = "gas";
+                break;
+        }
+
         entity[F("hotWaterSetPoint")] = _hotWaterSetPoint;
         entity[F("hotWaterCurrentTemperature")] = _hotWaterCurrentTemperature;
         entity[F("isHotWaterActive")] = _isHotWaterActive ? trueStr : falseStr;

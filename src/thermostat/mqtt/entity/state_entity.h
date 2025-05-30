@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
-#include "../../../defines.h"
+#include <enum/modes.h>
+#include "defines.h"
 
 const char trueStr[] = "true";
 const char falseStr[] = "false";
@@ -10,10 +11,10 @@ class StateEntity
 {
 public:
     StateEntity(
-        const char* centralHeatingMode,
+        EDHA::Mode centralHeatingMode,
         float centralHeatingSetPoint,
         float centralHeatingCurrentTemperature,
-        const char* hotWaterMode,
+        EDHA::Mode hotWaterMode,
         float hotWaterSetPoint,
         float hotWaterCurrentTemperature,
         bool isHotWaterActive,
@@ -32,11 +33,11 @@ public:
     std::string marshalJSON();
 
 private:
-    const char* _centralHeatingMode;
+    EDHA::Mode _centralHeatingMode;
     float _centralHeatingSetPoint;
     float _centralHeatingCurrentTemperature;
 
-    const char* _hotWaterMode;
+    EDHA::Mode _hotWaterMode;
     float _hotWaterSetPoint;
     float _hotWaterCurrentTemperature;
 
