@@ -184,7 +184,6 @@ void Boiler::loop()
         _openTherm->setDHWSetpoint(_current.getHotWaterSetPoint());
         if (_openTherm->getLastResponseStatus() != OpenThermResponseStatus::SUCCESS) {
             _current.setHotWaterSetPoint(_prev.getHotWaterSetPoint());
-        } else {
             openThermIsFault = true;
         }
  

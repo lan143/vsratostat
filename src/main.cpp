@@ -53,13 +53,14 @@ void setup() {
     openTherm.begin(handleInterrupt);
 
     wifiMgr.init();
-
-    mqtt.init();
-    wifiMgr.OnConnect([](bool isConnected) {
+    wifiMgr.OnConnect([&](bool isConnected) {
         if (isConnected) {
+            delay(50);
             mqtt.connect();
         }
     });
+
+    mqtt.init();
     healthCheck.registerService(&mqtt);
 
     discoveryMgr.init(

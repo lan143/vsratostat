@@ -19,7 +19,7 @@ void WiFiMgr::init()
                 ESP_LOGI("wifi", "disconnected");
             }
 
-            for (auto fn : _connectCallbacks) {
+            for (auto& fn : _connectCallbacks) {
                 fn(_isConnected);
             }
         });
