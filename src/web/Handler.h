@@ -8,6 +8,7 @@
 
 #include <ESPAsyncWebServer.h>
 #include <ConfigMgr.h>
+#include <healthcheck.h>
 
 #include "config.h"
 #include "thermostat/boiler.h"
@@ -18,8 +19,9 @@ public:
     Handler(
         EDConfig::ConfigMgr<Config>* configMgr,
         Boiler* boiler,
-        WiFiMgr* wifiMgr
-    ) : _configMgr(configMgr), _boiler(boiler), _wifiMgr(wifiMgr) {
+        WiFiMgr* wifiMgr,
+        EDHealthCheck::HealthCheck* healthcheck
+    ) : _configMgr(configMgr), _boiler(boiler), _wifiMgr(wifiMgr), _healthcheck(healthcheck) {
         _server = new AsyncWebServer(80);
     }
 
@@ -30,4 +32,5 @@ private:
     EDConfig::ConfigMgr<Config>* _configMgr;
     Boiler* _boiler;
     WiFiMgr* _wifiMgr;
+    EDHealthCheck::HealthCheck* _healthcheck;
 };

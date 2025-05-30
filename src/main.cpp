@@ -25,7 +25,7 @@ WiFiMgr wifiMgr(configMgr.getConfig());
 StateProducer stateProducer(&mqtt);
 Boiler boiler(&configMgr, &openTherm, &stateProducer);
 CommandConsumer commandConsumer(&boiler);
-Handler handler(&configMgr, &boiler, &wifiMgr);
+Handler handler(&configMgr, &boiler, &wifiMgr, &healthCheck);
 
 void ICACHE_RAM_ATTR handleInterrupt()
 {
@@ -50,14 +50,16 @@ void setup() {
     });
     configMgr.load();
 
-    ArduinoOTA.setPassword("somestrongpassword");
-    ArduinoOTA.begin();
-
     openTherm.begin(handleInterrupt);
 
     wifiMgr.init();
 
     mqtt.init();
+    wifiMgr.OnConnect([](bool isConnected) {
+        if (isConnected) {
+            mqtt.connect();
+        }
+    });
     healthCheck.registerService(&mqtt);
 
     discoveryMgr.init(
@@ -84,12 +86,14 @@ void setup() {
     commandConsumer.init(configMgr.getConfig().mqttCommandTopic);
     mqtt.subscribe(&commandConsumer);
 
+    ArduinoOTA.setPassword("somestrongpassword");
+    ArduinoOTA.begin();
+
     ESP_LOGI("setup", "complete");
 }
 
 void loop()
 {
-    mqtt.loop();
     boiler.loop();
     discoveryMgr.loop();
     ArduinoOTA.handle();

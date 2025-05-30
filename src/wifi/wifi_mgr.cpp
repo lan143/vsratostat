@@ -18,6 +18,10 @@ void WiFiMgr::init()
                 _isConnected = false;
                 ESP_LOGI("wifi", "disconnected");
             }
+
+            for (auto fn : _connectCallbacks) {
+                fn(_isConnected);
+            }
         });
         
         WiFi.begin(_config.wifiSSID, _config.wifiPassword);
