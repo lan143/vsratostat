@@ -59,14 +59,14 @@ void Boiler::init(EDHA::DiscoveryMgr* discoveryMgr, EDHA::Device* device)
         ->setActionTopic(config.mqttStateTopic)
         ->setActionTemplate("{{ value_json.centralHeatingState }}");
 
-        std::list<EDHA::Mode> howWaterModes;
-        climateModes.push_back(EDHA::MODE_OFF);
-        climateModes.push_back(EDHA::MODE_GAS);
-    
+    std::list<EDHA::Mode> hotWaterModes;
+    hotWaterModes.push_back(EDHA::MODE_OFF);
+    hotWaterModes.push_back(EDHA::MODE_GAS);
+
     discoveryMgr->addWaterHeater(
         device,
-        "How water",
-        "how_water",
+        "Hot water",
+        "hot_water",
         EDUtils::formatString("%s_hot_water_vsratostat", chipID)
     )
         ->setModeCommandTemplate("{\"hotWaterMode\": \"{{ value }}\" }")
@@ -79,7 +79,9 @@ void Boiler::init(EDHA::DiscoveryMgr* discoveryMgr, EDHA::Device* device)
         ->setMaxTemp(WATER_HEATING_MAX_TEMP)
         ->setTemperatureCommandTemplate("{\"hotWaterSetPoint\": {{ value }} }")
         ->setTemperatureCommandTopic(config.mqttCommandTopic)
-        ->setModes(howWaterModes);
+        ->setModes(hotWaterModes)
+        ->setInitial(_current.getHotWaterSetPoint())
+        ->setPrecision(1.0f);
 
     discoveryMgr->addSensor(
         device,
@@ -146,7 +148,7 @@ void Boiler::loop()
                 _current.isCentralHeatingOn() ? EDHA::MODE_HEAT : EDHA::MODE_OFF,
                 _current.getCentralHeatingSetPoint(),
                 _current.getCentralHeatingCurrentTemperature(),
-                _current.isHotWaterOn() ? EDHA::MODE_HEAT : EDHA::MODE_OFF,
+                _current.isHotWaterOn() ? EDHA::MODE_GAS : EDHA::MODE_OFF,
                 _current.getHotWaterSetPoint(),
                 _current.getHotWaterCurrentTemperature(),
                 _current.isHotWaterActive(),
