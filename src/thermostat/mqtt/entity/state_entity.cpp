@@ -18,15 +18,7 @@ std::string StateEntity::marshalJSON()
         entity[F("centralHeatingSetPoint")] = _centralHeatingSetPoint;
         entity[F("centralHeatingCurrentTemperature")] = _centralHeatingCurrentTemperature;
 
-        switch (_hotWaterMode) {
-            case EDHA::MODE_OFF:
-                entity[F("hotWaterMode")] = "off";
-                break;
-            case EDHA::MODE_GAS:
-                entity[F("hotWaterMode")] = "gas";
-                break;
-        }
-
+        entity[F("hotWaterMode")] = EDHA::mapMode(_hotWaterMode);
         entity[F("hotWaterSetPoint")] = _hotWaterSetPoint;
         entity[F("hotWaterCurrentTemperature")] = _hotWaterCurrentTemperature;
         entity[F("isHotWaterActive")] = _isHotWaterActive ? trueStr : falseStr;
